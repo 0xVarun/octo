@@ -15,4 +15,18 @@
 # You should have received a copy of the GNU General Public License
 # along with octo.  If not, see <http://www.gnu.org/licenses/>.
 
-add_subdirectory(uri)
+add_library(
+    octo
+    context.cc
+    log.cc
+)
+
+add_executable(
+    server
+    main.cc
+)
+
+target_link_libraries(
+    server
+    octo
+)
