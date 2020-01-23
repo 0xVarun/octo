@@ -17,8 +17,13 @@
 
 add_library(
     octo
-    context.cc
-    log.cc
+    request.cc
+)
+
+target_link_libraries(
+    octo
+    # Boost::algorithm
+    ${Boost_LIBRARIES}
 )
 
 add_executable(

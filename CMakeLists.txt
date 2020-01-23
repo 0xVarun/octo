@@ -37,5 +37,11 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
+find_package(Boost 1.65.1 REQUIRED)
+include_directories(${Boost_INCLUDE_DIRS})
+message(
+    status
+    "${Boost_INCLUDE_DIRS}"
+)
 include_directories(include)
 add_subdirectory(src)
