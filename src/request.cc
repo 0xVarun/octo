@@ -147,7 +147,7 @@ namespace  http {
         return this->impl_->http_version;
     }
 
-    std::string Request::get_header(std::string& header) const {
+    std::string Request::get_header(std::string header) const {
         if(this->impl_->headers.find(header) == this->impl_->headers.end()) {
             return nullptr;
         } else {

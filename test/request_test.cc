@@ -16,13 +16,12 @@
  * You should have received a copy of the GNU General Public License
  * along with octo.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <iostream>
 
+#include <gtest/gtest.h>
 #include <octo/request.h>
 
-int main(int argc, char **argv) {
-    octo::http::Request req;
-    std::string raw = "GET /foo/bar HTTP/1.1\r\n"
+namespace {
+    std::string raw_request = "GET /foo/bar HTTP/1.1\r\n"
         "Host: example.org\r\n"
         "User-Agent: Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.6; fr; rv:1.9.2.8) Gecko/20100722 Firefox/3.6.8\r\n"
         "Accept: */*\r\n"
@@ -37,8 +36,21 @@ int main(int argc, char **argv) {
         "Cookie: foo=bar; lorem=ipsum\r\n"
         "\r\n\r\n"
         "foo=bar&bar=foo";
-    req.parse_http_request(raw);
-    std::cout << req.get_method() << std::endl;
-    std::cout << req.get_path() << std::endl;
-    std::cout << req.get_http_verion() << std::endl;
+}
+
+TEST(HTTPRequest, RequestLineTest) {
+    octo::http::Request request;
+    ASSERT_TRUE(request.parse_http_request(raw_request));
+    ASSERT_EQ(request.get_method(), "GET");
+    ASSERT_EQ(request.get_path(), "/foo/bar");
+    ASSERT_EQ(request.get_http_verion(), "HTTP/1.1");
+}
+
+TEST(HTTPRequest, HeadersTest) {
+    octo::http::Request request;
+    ASSERT_TRUE(request.parse_http_request(raw_request));
+    std::string host_header = request.get_header("Host");
+    ASSERT_EQ(host_header, "example.com");
+    std::string powered_by_header = request.get_header("X-Powered-By");
+    ASSERT_EQ(powered_by_header, nullptr);
 }

@@ -80,7 +80,7 @@ namespace http {
          * @param header header key
          * @return std::string 
          */
-        std::string get_header(std::string& header) const;
+        std::string get_header(std::string header) const;
     private: // private function
         bool parse_request_line(std::string& req_line);
         bool parse_headers(std::string& payload);
