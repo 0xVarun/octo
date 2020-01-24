@@ -19,3 +19,12 @@
 add_subdirectory(uri)
 add_subdirectory(http)
 
+add_executable(
+    testing
+    main.cc
+)
+
+target_link_libraries(
+    testing
+    octo::uri
+)

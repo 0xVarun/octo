@@ -20,10 +20,11 @@
 #ifndef __OCTO_URI_H_
 #define __OCTO_URI_H_
 
+#include <map>
 #include <string>
 #include <memory>
 #include <vector>
-#include <map>
+#include <initializer_list>
 #include <stdint.h>
 
 namespace octo {
@@ -48,7 +49,17 @@ class Uri {
   std::string get_authority() const;
   uint16_t get_port() const;
   std::vector<std::string> get_path() const;
-  std::vector< std::map< std::string, std::string >> get_querys() const;
+  std::vector< std::pair< std::string, std::string >> get_querys() const;
+
+  // setters
+  void set_scheme(std::string scheme);
+  void set_authority(std::string authority);
+  void set_port(uint16_t port);
+  void set_path(std::initializer_list<std::string> path);
+  void set_query(
+      std::initializer_list<std::pair<std::string, std::string>> queries);
+
+  std::string to_string() const;
  private:
   struct Impl;
   std::unique_ptr<Impl> impl_;

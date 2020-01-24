@@ -18,6 +18,7 @@
  */
 
 #include <iostream>
+#include <sstream>
 #include <string>
 #include <vector>
 #include <map>
@@ -30,7 +31,7 @@ namespace uri {
 
 struct Uri::Impl {
   /**
-   * this holds the scheme (protocol)
+   * this stores the scheme (protocol)
    * part of the uri if present
    */
   std::string scheme;
@@ -42,13 +43,13 @@ struct Uri::Impl {
   bool has_scheme;
 
   /**
-   * this holds the host part of
+   * this stores the host part of
    * the uri if present (not relative)
    */
   std::string host;
 
   /**
-   * this holds the port of the uri
+   * this stores the port of the uri
    * if present
    */
   uint16_t port;
@@ -67,22 +68,35 @@ struct Uri::Impl {
   bool is_relative;
 
   /**
-   * this hold the segments of path
+   * this stores the segments of path
    * in the URI
    */
   std::vector<std::string> path;
 
   /**
-   * this holds the query string component
+   * this stores the query string component
    * of the URI if present
    */
-  std::vector<std::map<std::string, std::string>> query_string;
+  std::vector< std::pair< std::string, std::string >> query_string;
 
   /**
    * this flag indicates whether the URI has
    * a query string component
    */
   bool has_query = false;
+
+  /**
+   * this stores the fragment part
+   * of the query
+   */
+  std::string fragment;
+
+  /**
+   * this flag indicates whether
+   * the query has a fragment
+   * component
+   */
+  bool has_fragment = false;
 
   /**
    * this is a helper method that parses the Scheme
@@ -93,7 +107,7 @@ struct Uri::Impl {
    *     the scheme element
    *
    * @param[in] rest
-   *     rest holds the substring after the uri has
+   *     rest stores the substring after the uri has
    *     been parsed for the scheme and the scheme
    *     is removed
    */
@@ -182,21 +196,15 @@ struct Uri::Impl {
    * a sequence of segments
    *
    * @param[in] pathString
-   *     this holds the unparsed path string
+   *     this stores the unparsed path string
    *     of the URI
    *
    * @param[in] rest
-   *     this holds the query part and the fragment
+   *     this stores the query part and the fragment
    *     path of the URI if present
    */
   bool parsePath(std::string& pathString, std::string& rest) {
     this->path.clear();
-    // size_t qfDelimiter = pathString.find("?");
-    // if (qfDelimiter == std::string::npos) {
-    //   qfDelimiter = pathString.length();
-    // }
-    // rest = pathString.substr(qfDelimiter + 1);
-    // pathString = pathString.substr(0, qfDelimiter);
     if (pathString == "/") {
       this->path.push_back("");
       pathString.clear();
@@ -217,9 +225,45 @@ struct Uri::Impl {
     return true;
   }
 
-  bool parseQueryString(std::string& queryString, std::string& rest) {
-    return true;
+  bool parseQueryString(std::string& queryString) {
+	if (!this->has_query) { return true; }
+	for(;;) {
+		// foo=bar&bar=foo
+		size_t queryDelimiter = queryString.find("&");
+		if (queryDelimiter == std::string::npos) {
+			size_t eqDelimiter = queryString.find("=");
+			if (eqDelimiter == std::string::npos) {
+				return false;
+			} else {
+				std::string key = queryString.substr(0, eqDelimiter);
+				std::string value = queryString.substr(eqDelimiter + 1);
+				this->query_string.emplace_back(std::make_pair(key, value));
+			}
+			break;
+		} else {
+			size_t eqDelimiter = queryString.find_first_of("=");
+			if (eqDelimiter == std::string::npos) {
+				return false;
+			} else {
+				std::string key = queryString.substr(0, eqDelimiter);
+				std::string value = queryString.substr(eqDelimiter + 1, queryDelimiter);
+				this->query_string.push_back(std::make_pair(key, value));
+			}
+			queryString = queryString.substr(queryDelimiter + 1);
+		}
+	}
+	return true;
   }
+
+  std::string formatQueryString() {
+	std::stringstream query;
+	for (std::pair<std::string, std::string> q : this->query_string) {
+		query << q.first << "=" << q.second << "&"; 
+	}
+	std::string temp = query.str();
+	return temp.substr(0, temp.length() - 1);
+  }
+
 };
 
 Uri::Uri() : impl_(new Impl) {}
@@ -250,10 +294,14 @@ bool Uri::parse(const std::string& raw) {
     return false;
   }
 
-  std::string fragment;
-  if (!this->impl_->parseQueryString(queryAndFragment, fragment)) {
+  if (!this->impl_->parseQueryString(queryAndFragment)) {
     return false;
   }
+
+//   for(auto x: this->impl_->query_string) {
+// 	std::cout << "[+] key = " << x.first << " value = " << x.second << std::endl;
+//   }
+
   return true;
 }
 
@@ -276,8 +324,47 @@ uint16_t Uri::get_port() const { return this->impl_->port; }
 
 std::vector<std::string> Uri::get_path() const { return this->impl_->path; }
 
-std::vector<std::map<std::string, std::string>> Uri::get_querys() const {
+std::vector< std::pair< std::string, std::string >> Uri::get_querys() const {
   this->impl_->query_string;
+}
+
+void Uri::set_scheme(std::string scheme) {
+	this->impl_->has_scheme = true;
+	this->impl_->scheme = scheme;
+}
+
+void Uri::set_authority(std::string authority) {
+	this->impl_->host = authority;
+}
+
+void Uri::set_port(uint16_t port) {
+	this->impl_->has_port = true;
+	this->impl_->port = port;
+}
+
+void Uri::set_path(std::initializer_list<std::string> path) {
+	this->impl_->path = path;
+}
+
+void Uri::set_query(
+    std::initializer_list<std::pair<std::string, std::string>> queries) {
+	this->impl_->has_query = true;
+	this->impl_->query_string = queries;
+}
+
+std::string Uri::to_string() const {
+	std::stringstream ss;
+	if (this->impl_->has_scheme) {
+		ss << this->get_scheme() << "://";
+	}
+	ss << this->impl_->host;
+	if (this->impl_->has_port) {
+		ss << ":" << this->get_port() << "/";
+	}
+	if (this->impl_->has_query) {
+		ss << "?" << this->impl_->formatQueryString();
+	}
+	return ss.str();
 }
 
 Uri::~Uri() = default;
