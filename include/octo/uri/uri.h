@@ -22,6 +22,7 @@
 
 #include <string>
 #include <memory>
+#include <vector>
 #include <stdint.h>
 
 namespace octo {
@@ -38,6 +39,7 @@ namespace uri {
         // bool parse(const std::string& raw);
         bool parse(const std::string& raw);
         bool has_scheme() const;
+	std::vector< std::string > get_path() const;
         std::string get_scheme() const;
         // std::string get_host() const;
         // bool has_port() const;
