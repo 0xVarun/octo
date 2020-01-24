@@ -22,21 +22,35 @@
 #include <octo/uri/uri.h>
 
 TEST(URITest, URIParseFromString) {
-    octo::uri::Uri uri;
-    ASSERT_TRUE(uri.parse("http://example.org"));
-    ASSERT_EQ("http", uri.get_scheme());
+  octo::uri::Uri uri;
+  ASSERT_TRUE(uri.parse("http://example.org"));
+  ASSERT_EQ("http", uri.get_scheme());
+  ASSERT_EQ("example.org", uri.get_authority());
 }
 
 TEST(URITest, URIParseFromStringWithPath) {
-    octo::uri::Uri uri;
-    ASSERT_TRUE(uri.parse("http://example.org/foo/bar"));
-    ASSERT_EQ("http", uri.get_scheme());
-    ASSERT_EQ(
-	(std::vector< std::string >{
-	    "",
-	    "foo",
-	    "bar",
-	}),
-	uri.get_path()
-    );
+  octo::uri::Uri uri;
+  ASSERT_TRUE(uri.parse("http://example.org/foo/bar"));
+  ASSERT_EQ("http", uri.get_scheme());
+  ASSERT_EQ("example.org", uri.get_authority());
+  ASSERT_EQ((std::vector<std::string>{
+                "",
+                "foo",
+                "bar",
+            }),
+            uri.get_path());
+}
+
+TEST(URITest, URIParseFromStringWithPathWithQueryParameter) {
+  octo::uri::Uri uri;
+  ASSERT_TRUE(uri.parse("http://example.org/foo/bar?foo=bar&bar=foo"));
+  ASSERT_EQ("http", uri.get_scheme());
+  ASSERT_EQ("example.org", uri.get_authority());
+}
+
+TEST(URITest, URIParseFromStringWithoutPathWithQueryParameter) {
+  octo::uri::Uri uri;
+  ASSERT_TRUE(uri.parse("http://example.org/?foo=bar&bar=foo"));
+  ASSERT_EQ("http", uri.get_scheme());
+  ASSERT_EQ("example.org", uri.get_authority());
 }

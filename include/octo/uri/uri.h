@@ -23,35 +23,38 @@
 #include <string>
 #include <memory>
 #include <vector>
+#include <map>
 #include <stdint.h>
 
 namespace octo {
 namespace uri {
-    class Uri {
-    public:
-        ~Uri();
-    public:
-        Uri();
+class Uri {
+ public:
+  ~Uri();
 
-        // public methods
-        // bool operator==(const Uri& other) const;
-        // bool operator!=(const Uri& other) const;
-        // bool parse(const std::string& raw);
-        bool parse(const std::string& raw);
-        bool has_scheme() const;
-	std::vector< std::string > get_path() const;
-        std::string get_scheme() const;
-        // std::string get_host() const;
-        // bool has_port() const;
-        // uint16_t get_port() const;
-        // bool is_relative() const;
-    private:
-        struct Impl;
-        std::unique_ptr< Impl > impl_;
-    }; // class Uri
-} // namespace uri
+ public:
+  Uri();
 
-} // namespace octo
+  // public methods
+  bool parse(const std::string& raw);
 
+  // checks
+  bool has_scheme() const;
+  bool has_port() const;
+  bool has_query() const;
+
+  // getters
+  std::string get_scheme() const;
+  std::string get_authority() const;
+  uint16_t get_port() const;
+  std::vector<std::string> get_path() const;
+  std::vector< std::map< std::string, std::string >> get_querys() const;
+ private:
+  struct Impl;
+  std::unique_ptr<Impl> impl_;
+};  // class Uri
+}  // namespace uri
+
+}  // namespace octo
 
 #endif // __OCTO_URI_H_

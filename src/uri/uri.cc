@@ -20,6 +20,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <map>
 #include <stdint.h>
 
 #include <octo/uri/uri.h>
@@ -60,7 +61,8 @@ struct Uri::Impl {
   bool has_port;
 
   /**
-   * this flag indicates if the
+   * this flag indicates if the URI is
+   * relative
    */
   bool is_relative;
 
@@ -69,6 +71,18 @@ struct Uri::Impl {
    * in the URI
    */
   std::vector<std::string> path;
+
+  /**
+   * this holds the query string component
+   * of the URI if present
+   */
+  std::vector<std::map<std::string, std::string>> query_string;
+
+  /**
+   * this flag indicates whether the URI has
+   * a query string component
+   */
+  bool has_query = false;
 
   /**
    * this is a helper method that parses the Scheme
@@ -177,12 +191,12 @@ struct Uri::Impl {
    */
   bool parsePath(std::string& pathString, std::string& rest) {
     this->path.clear();
-    size_t qfDelimiter = pathString.find("?");
-    if (qfDelimiter == std::string::npos) {
-      qfDelimiter = pathString.length();
-    }
-    rest = pathString.substr(qfDelimiter + 1);
-    pathString = pathString.substr(0, qfDelimiter);
+    // size_t qfDelimiter = pathString.find("?");
+    // if (qfDelimiter == std::string::npos) {
+    //   qfDelimiter = pathString.length();
+    // }
+    // rest = pathString.substr(qfDelimiter + 1);
+    // pathString = pathString.substr(0, qfDelimiter);
     if (pathString == "/") {
       this->path.push_back("");
       pathString.clear();
@@ -202,6 +216,10 @@ struct Uri::Impl {
     }
     return true;
   }
+
+  bool parseQueryString(std::string& queryString, std::string& rest) {
+    return true;
+  }
 };
 
 Uri::Uri() : impl_(new Impl) {}
@@ -211,19 +229,33 @@ bool Uri::parse(const std::string& raw) {
   if (!this->impl_->parseScheme(raw, rest)) {
     return false;
   }
-  std::string pathString;
-  if (!this->impl_->splitAuthorityAndPath(rest, pathString)) {
+  std::string pathStringWithQuery;
+  // TODO: if uri has no path but only query, this will fail
+  if (!this->impl_->splitAuthorityAndPath(rest, pathStringWithQuery)) {
     return false;
   }
   std::string queryAndFragment;
+  std::string pathString;
+  size_t pathEndDelimiter = pathStringWithQuery.find("?");
+  if (pathEndDelimiter == std::string::npos) {
+    this->impl_->has_query = false;
+    this->impl_->query_string.clear();
+    pathString = pathStringWithQuery;
+  } else {
+    pathString = pathStringWithQuery.substr(0, pathEndDelimiter);
+    queryAndFragment = pathStringWithQuery.substr(pathEndDelimiter + 1);
+    this->impl_->has_query = true;
+  }
   if (!this->impl_->parsePath(pathString, queryAndFragment)) {
     return false;
   }
-  std::cout << queryAndFragment << std::endl;
+
+  std::string fragment;
+  if (!this->impl_->parseQueryString(queryAndFragment, fragment)) {
+    return false;
+  }
   return true;
 }
-
-bool Uri::has_scheme() const { return this->impl_->has_scheme; }
 
 std::string Uri::get_scheme() const {
   if (this->impl_->has_scheme) {
@@ -232,7 +264,21 @@ std::string Uri::get_scheme() const {
   return "";
 }
 
+bool Uri::has_scheme() const { return this->impl_->has_scheme; }
+
+bool Uri::has_port() const { return this->impl_->has_port; }
+
+bool Uri::has_query() const { return this->impl_->has_query; }
+
+std::string Uri::get_authority() const { return this->impl_->host; }
+
+uint16_t Uri::get_port() const { return this->impl_->port; }
+
 std::vector<std::string> Uri::get_path() const { return this->impl_->path; }
+
+std::vector<std::map<std::string, std::string>> Uri::get_querys() const {
+  this->impl_->query_string;
+}
 
 Uri::~Uri() = default;
 
