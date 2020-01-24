@@ -24,4 +24,5 @@
 TEST(URITest, URIParseFromString) {
     octo::uri::Uri uri;
     ASSERT_TRUE(uri.parse("http://example.org"));
+    ASSERT_EQ("http", uri.get_scheme());
 }

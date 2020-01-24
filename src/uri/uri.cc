@@ -28,12 +28,34 @@ namespace uri {
 
     struct Uri::Impl {
         uint16_t port = static_cast<uint16_t>(0);
+	bool has_scheme;
+	std::string scheme;
     };
 
     Uri::Uri() : impl_(new Impl) {}
 
     bool Uri::parse(const std::string& raw) {
-        return true;
+        size_t scheme_delimiter = raw.find(":");
+	std::string rest;
+	if (scheme_delimiter == std::string::npos) {
+	    this->impl_->has_scheme = false;
+	    rest = raw;
+	} else {
+	    this->impl_->has_scheme = true;
+	    this->impl_->scheme = raw.substr(0, scheme_delimiter);
+	    rest = raw.substr(scheme_delimiter + 1);
+	}
+    }
+
+    bool Uri::has_scheme() const {
+	return this->impl_->has_scheme;
+    }
+
+    std::string Uri::get_scheme() const {
+	if (this->impl_->has_scheme) {
+	    return this->impl_->scheme;
+	}
+	return "";
     }
 
     Uri::~Uri() = default;

@@ -37,7 +37,8 @@ namespace uri {
         // bool operator!=(const Uri& other) const;
         // bool parse(const std::string& raw);
         bool parse(const std::string& raw);
-        // std::string get_schemme() const;
+        bool has_scheme() const;
+        std::string get_scheme() const;
         // std::string get_host() const;
         // bool has_port() const;
         // uint16_t get_port() const;
