@@ -1,4 +1,4 @@
-# Copyright (C) 2020 varun
+# Copyright (C) 2020 Varun Tewari
 # 
 # This file is part of octo.
 # 
@@ -16,6 +16,14 @@
 # along with octo.  If not, see <http://www.gnu.org/licenses/>.
 
 
-add_subdirectory(uri)
-add_subdirectory(http)
+add_library(
+    uri STATIC
+    uri.cc
+)
 
+
+add_library(
+    octo::uri
+    ALIAS
+    uri
+)

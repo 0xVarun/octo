@@ -15,13 +15,6 @@
 # You should have received a copy of the GNU General Public License
 # along with octo.  If not, see <http://www.gnu.org/licenses/>.
 
-add_executable(
-    request_test
-    request_test.cc
-)
+create_test(request_test octo::http)
+create_test(uri_test octo::uri)
 
-target_link_libraries(
-    request_test
-    octo
-    gtest_main
-)

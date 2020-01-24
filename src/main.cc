@@ -18,7 +18,7 @@
  */
 #include <iostream>
 
-#include <octo/request.h>
+#include <octo/http/request.h>
 
 int main(int argc, char **argv) {
     octo::http::Request req;

@@ -25,7 +25,7 @@
 
 #include <boost/algorithm/string.hpp>
 
-#include <octo/request.h>
+#include <octo/http/request.h>
 
 #define CRLF "\r\n"
 #define SPACE " "
@@ -79,6 +79,8 @@ namespace  http {
         }
         std::string rest = raw.substr(request_line_size + 2);
         this->parse_headers(rest);
+	// need to parse URI
+	// need to prepare route dispatcher
         return true;
     }
 
@@ -149,7 +151,7 @@ namespace  http {
 
     std::string Request::get_header(std::string header) const {
         if(this->impl_->headers.find(header) == this->impl_->headers.end()) {
-            return nullptr;
+            return "";
         } else {
             return this->impl_->headers.at(header);
         }

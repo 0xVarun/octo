@@ -1,4 +1,4 @@
-# Copyright (C) 2020 varun
+# Copyright (C) 2020 Varun Tewari
 # 
 # This file is part of octo.
 # 
@@ -15,7 +15,14 @@
 # You should have received a copy of the GNU General Public License
 # along with octo.  If not, see <http://www.gnu.org/licenses/>.
 
+add_library(
+    http STATIC
+    request.cc
+)
 
-add_subdirectory(uri)
-add_subdirectory(http)
 
+add_library(
+    octo::http
+    ALIAS
+    http
+)

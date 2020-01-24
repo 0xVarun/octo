@@ -18,7 +18,7 @@
  */
 
 #include <gtest/gtest.h>
-#include <octo/request.h>
+#include <octo/http/request.h>
 
 namespace {
     std::string raw_request = "GET /foo/bar HTTP/1.1\r\n"
@@ -50,7 +50,7 @@ TEST(HTTPRequest, HeadersTest) {
     octo::http::Request request;
     ASSERT_TRUE(request.parse_http_request(raw_request));
     std::string host_header = request.get_header("Host");
-    ASSERT_EQ(host_header, "example.com");
+    ASSERT_EQ(host_header, "example.org");
     std::string powered_by_header = request.get_header("X-Powered-By");
-    ASSERT_EQ(powered_by_header, nullptr);
+    ASSERT_EQ(powered_by_header, "");
 }
