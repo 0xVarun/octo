@@ -9,7 +9,7 @@ changes in the future, this document will be updated to say the same
 ```console
 $ git clone https://github.com/0xVarun/octo.git Octo
 $ cd Octo && mkdir build && cd build
-$ cmake -G Ninja -DBUILD_URI_LIBRARY=ON ..
+$ cmake -G Ninja -DBUILD_URI_LIBRARY=ON -DURI_BUILD_STYLE=<STATIC|SHARED> ..
 $ ninja
 ```
 
