@@ -169,24 +169,24 @@ struct Uri::Impl {
    *    of the uri is stored after the
    *    authority has been removed.
    */
-  bool splitAuthorityAndPath(std::string& authrorityWithPath,
+  bool splitAuthorityAndPath(std::string& authorityWithPath,
                              std::string& pathString) {
-    if (authrorityWithPath.substr(0, 2) == "//") {
-      authrorityWithPath = authrorityWithPath.substr(2);
+    if (authorityWithPath.substr(0, 2) == "//") {
+      authorityWithPath = authorityWithPath.substr(2);
       this->is_relative = false;
-      size_t pathStart = authrorityWithPath.find("/");
+      size_t pathStart = authorityWithPath.find("/");
       if (pathStart == std::string::npos) {
-        pathStart = authrorityWithPath.length();
+        pathStart = authorityWithPath.length();
       }
-      pathString = authrorityWithPath.substr(pathStart);
-      std::string authority = authrorityWithPath.substr(0, pathStart);
+      pathString = authorityWithPath.substr(pathStart);
+      std::string authority = authorityWithPath.substr(0, pathStart);
       if (!parseAuthority(authority)) {
         return false;
       }
     } else {
       this->is_relative = true;
       this->has_port = false;
-      pathString = authrorityWithPath;
+      pathString = authorityWithPath;
     }
     return true;
   }
