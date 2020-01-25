@@ -21,24 +21,23 @@
 #include <string>
 #include <vector>
 #include <string.h>
+#include <sstream>
 #include <iostream>
 
 #include <boost/algorithm/string.hpp>
 
+#include <octo/uri/uri.h>
 #include <octo/http/request.h>
 
 #define CRLF "\r\n"
 #define SPACE " "
 
+namespace {
+    std::string PAYLOAD_DELIMITER("\r\n\r\n");
+}
+
 namespace octo {
 namespace  http {
-    
-    struct Request::Impl {
-        Method method;
-        std::string path;
-        std::string http_version;
-        std::map< std::string, std::string> headers;
-    };
 
     std::map< Request::Method, std::string > method_str = {
         { Request::Method::GET,     "GET"       },
@@ -65,7 +64,7 @@ namespace  http {
         }
     }
 
-    Request::Request() : impl_(new Impl) {}
+    Request::Request() {}
     
     bool Request::parse_http_request(std::string& raw) {
         size_t request_line_size = raw.find_first_of(CRLF);
@@ -79,7 +78,18 @@ namespace  http {
         }
         std::string rest = raw.substr(request_line_size + 2);
         this->parse_headers(rest);
-	// need to parse URI
+
+        // checking if the Content-Length equals Payload size
+        std::string contentLength = this->get_header("Content-Length");
+        if (contentLength.length() == 0) {
+            return false;
+        }
+        size_t payloadSize = this->payload.size();
+        size_t reportSize = static_cast<size_t>(std::stoi(contentLength));
+        if (payloadSize != reportSize) {
+            return false;
+        }
+
 	// need to prepare route dispatcher
         return true;
     }
@@ -92,8 +102,8 @@ namespace  http {
         if (delimiter == std::string::npos) {
             return false;
         }
-        this->impl_->method = parse_method(req_line.substr(0, delimiter));
-        if (this->impl_->method == Method::INVALID) {
+        this->method = parse_method(req_line.substr(0, delimiter));
+        if (this->method == Method::INVALID) {
             return false;
         }
 
@@ -104,21 +114,23 @@ namespace  http {
             return false;
         }
 
-        this->impl_->path = rest.substr(0, delimiter);
+        this->path.parse(rest.substr(0, delimiter));
         rest = rest.substr(delimiter + 1);
 
         // parses HTTP version
-        this->impl_->http_version = rest.substr(0, rest.length());
+        this->http_version = rest.substr(0, rest.length());
 
         return true;
     }
 
     bool Request::parse_headers(std::string& payload) {
-        size_t delimiter = payload.find("\r\n\r\n");
+        size_t delimiter = payload.find(PAYLOAD_DELIMITER);
         if (delimiter == std::string::npos) {
             return false;
         }
         std::string headers = payload.substr(0, delimiter);
+        std::string data = payload.substr(delimiter + PAYLOAD_DELIMITER.length());
+        this->payload.assign(data.begin(), data.end());
         std::vector< std::string > header_lines;
         boost::split(header_lines, headers, boost::is_any_of("\r\n"));
         for(std::string header: header_lines) {
@@ -132,31 +144,34 @@ namespace  http {
                 boost::algorithm::trim(key);
                 std::string value = header.substr(kv + 1);
                 boost::algorithm::trim(value);
-                this->impl_->headers.emplace(std::make_pair(key, value));
+                this->headers.emplace(std::make_pair(key, value));
             }
         }
     }
 
+
+
     std::string Request::get_method() const {
-        return method_str[this->impl_->method];
+        return method_str[this->method];
     }
     
     std::string Request::get_path() const {
-        return this->impl_->path;
+        std::ostringstream ss;
+        ss << this->path;
+        return ss.str();
     }
 
     std::string Request::get_http_verion() const {
-        return this->impl_->http_version;
+        return this->http_version;
     }
 
     std::string Request::get_header(std::string header) const {
-        if(this->impl_->headers.find(header) == this->impl_->headers.end()) {
+        if(this->headers.find(header) == this->headers.end()) {
             return "";
         } else {
-            return this->impl_->headers.at(header);
+            return this->headers.at(header);
         }
     }
 
-    Request::~Request() {}
 }
 }

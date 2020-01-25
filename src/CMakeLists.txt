@@ -27,4 +27,5 @@ add_executable(
 target_link_libraries(
     testing
     octo::uri
+    octo::http
 )

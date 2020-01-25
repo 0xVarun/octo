@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with octo.  If not, see <http://www.gnu.org/licenses/>.
 
-option(BUILD_URI_LIBRARY "Build URI library" OFF)
+option(BUILD_URI_LIBRARY "Build URI library" ON)
 set(URI_BUILD_STYLE STATIC CACHE STRING "Build URI as STATIC or SHARED library")
 
 if (${BUILD_URI_LIBRARY})

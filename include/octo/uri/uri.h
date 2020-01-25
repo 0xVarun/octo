@@ -70,6 +70,15 @@ class Uri {
    */
   bool hasQuery() const;
 
+  /**
+   * this function returns the isRelative flag
+   * from the class state
+   * @return bool
+   *     an indication whether the URI was a
+   *     relative URI is returned
+   */
+  bool isRelative() const;
+
   // getters
   /**
    * Get the Protocol from the class
@@ -126,7 +135,7 @@ class Uri {
    * @return std::vector< std::pair< std::string, std::string >>
    *     this stores a vector of key-value
    *     pair of the query params in the
-   *     uri
+   *     URI
    */
   std::vector< std::pair< std::string, std::string >> getQueryString() const;
 
@@ -178,8 +187,6 @@ class Uri {
    */
   void setQuery(
       std::initializer_list<std::pair<std::string, std::string>> queries);
-
-  std::string to_string() const;
 
   /**
    * << operator overload to log the

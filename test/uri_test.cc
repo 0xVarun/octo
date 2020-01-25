@@ -74,3 +74,17 @@ TEST(URITest, URIParseFromStringWithPathWithQueryParameter) {
     ASSERT_EQ("example.org", uri.getHost());
   // ASSERT_EQ("example.org", uri.get_authority());
 }
+
+
+TEST(URITEST,  ParseRelativeURI) {
+    octo::uri::Uri uri;
+    ASSERT_TRUE(uri.parse("/foo/bar"));
+    ASSERT_EQ(
+        (std::vector< std::string >{
+            "",
+            "foo",
+            "bar",
+        }),
+        uri.getPath()
+    );
+}

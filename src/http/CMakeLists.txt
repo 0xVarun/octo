@@ -20,6 +20,10 @@ add_library(
     request.cc
 )
 
+target_link_libraries(
+    http
+    octo::uri
+)
 
 add_library(
     octo::http

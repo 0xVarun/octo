@@ -34,13 +34,13 @@ struct Uri::Impl {
    * this stores the scheme (protocol)
    * part of the uri if present
    */
-  std::string scheme;
+  std::string protocol;
 
   /**
    * this flag indicates if the scheme (protocol)
    * part of the uri is present
    */
-  bool has_scheme;
+  bool hasProtocol;
 
   /**
    * this stores the host part of
@@ -59,13 +59,13 @@ struct Uri::Impl {
    * component, if false, port value will be
    * ignored
    */
-  bool has_port;
+  bool hasPort;
 
   /**
    * this flag indicates if the URI is
    * relative
    */
-  bool is_relative;
+  bool isRelative;
 
   /**
    * this stores the segments of path
@@ -83,7 +83,7 @@ struct Uri::Impl {
    * this flag indicates whether the URI has
    * a query string component
    */
-  bool has_query = false;
+  bool hasQuery = false;
 
   /**
    * this stores the fragment part
@@ -118,11 +118,11 @@ struct Uri::Impl {
     }
     size_t scheme_delimiter = uri.substr(0, authority_path_start).find(":");
     if (scheme_delimiter == std::string::npos) {
-      this->has_scheme = false;
+      this->hasProtocol = false;
       rest = uri;
     } else {
-      this->has_scheme = true;
-      this->scheme = uri.substr(0, scheme_delimiter);
+      this->hasProtocol = true;
+      this->protocol = uri.substr(0, scheme_delimiter);
       rest = uri.substr(scheme_delimiter + 1);
     }
     return true;
@@ -145,10 +145,10 @@ struct Uri::Impl {
   bool parseAuthority(std::string& authority) {
     size_t portDelimiter = authority.find(":");
     if (portDelimiter == std::string::npos) {
-      this->has_port = false;
+      this->hasPort = false;
       this->host = authority;
     } else {
-      this->has_port = true;
+      this->hasPort = true;
       this->host = authority.substr(0, portDelimiter);
       this->port = static_cast<uint16_t>(
           std::stoi(authority.substr(this->host.length() + 1)));
@@ -169,24 +169,24 @@ struct Uri::Impl {
    *    of the uri is stored after the
    *    authority has been removed.
    */
-  bool splitAuthorityAndPath(std::string& authorityWithPath,
+  bool splitAuthorityAndPath(std::string& authrorityWithPath,
                              std::string& pathString) {
-    if (authorityWithPath.substr(0, 2) == "//") {
-      authorityWithPath = authorityWithPath.substr(2);
-      this->is_relative = false;
-      size_t pathStart = authorityWithPath.find("/");
+    if (authrorityWithPath.substr(0, 2) == "//") {
+      authrorityWithPath = authrorityWithPath.substr(2);
+      this->isRelative = false;
+      size_t pathStart = authrorityWithPath.find("/");
       if (pathStart == std::string::npos) {
-        pathStart = authorityWithPath.length();
+        pathStart = authrorityWithPath.length();
       }
-      pathString = authorityWithPath.substr(pathStart);
-      std::string authority = authorityWithPath.substr(0, pathStart);
+      pathString = authrorityWithPath.substr(pathStart);
+      std::string authority = authrorityWithPath.substr(0, pathStart);
       if (!parseAuthority(authority)) {
         return false;
       }
     } else {
-      this->is_relative = true;
-      this->has_port = false;
-      pathString = authorityWithPath;
+      this->isRelative = true;
+      this->isRelative = false;
+      pathString = authrorityWithPath;
     }
     return true;
   }
@@ -226,7 +226,7 @@ struct Uri::Impl {
   }
 
   bool parseQueryString(std::string& queryString) {
-	if (!this->has_query) { return true; }
+	if (!this->hasQuery) { return true; }
 	for(;;) {
 		// foo=bar&bar=foo
 		size_t queryDelimiter = queryString.find("&");
@@ -294,13 +294,13 @@ bool Uri::parse(const std::string& raw) {
   std::string pathString;
   size_t pathEndDelimiter = pathStringWithQuery.find("?");
   if (pathEndDelimiter == std::string::npos) {
-    this->impl_->has_query = false;
+    this->impl_->hasQuery = false;
     this->impl_->query_string.clear();
     pathString = pathStringWithQuery;
   } else {
     pathString = pathStringWithQuery.substr(0, pathEndDelimiter);
     queryAndFragment = pathStringWithQuery.substr(pathEndDelimiter + 1);
-    this->impl_->has_query = true;
+    this->impl_->hasQuery = true;
   }
   if (!this->impl_->parsePath(pathString, queryAndFragment)) {
     return false;
@@ -312,13 +312,17 @@ bool Uri::parse(const std::string& raw) {
   return true;
 }
 
-bool Uri::hasPort() const { return this->impl_->has_port; }
+bool Uri::hasPort() const { return this->impl_->hasPort; }
 
-bool Uri::hasQuery() const { return this->impl_->has_query; }
+bool Uri::hasQuery() const { return this->impl_->hasQuery; }
+
+
+bool Uri::isRelative() const { return this->impl_->isRelative; }
+
 
 std::string Uri::getProtocol() const {
-  if (this->impl_->has_scheme) {
-    return this->impl_->scheme;
+  if (this->impl_->hasProtocol) {
+    return this->impl_->protocol;
   }
   return "";
 }
@@ -336,8 +340,8 @@ std::vector< std::pair< std::string, std::string >> Uri::getQueryString() const 
 }
 
 void Uri::setProtocol(std::string scheme) {
-	this->impl_->has_scheme = true;
-	this->impl_->scheme = scheme;
+	this->impl_->hasProtocol = true;
+	this->impl_->protocol = scheme;
 }
 
 void Uri::setHost(std::string authority) {
@@ -345,7 +349,7 @@ void Uri::setHost(std::string authority) {
 }
 
 void Uri::setPort(uint16_t port) {
-	this->impl_->has_port = true;
+	this->impl_->hasPort = true;
 	this->impl_->port = port;
 }
 
@@ -355,27 +359,12 @@ void Uri::setPath(std::initializer_list<std::string> path) {
 
 void Uri::setQuery(
     std::initializer_list<std::pair<std::string, std::string>> queries) {
-	this->impl_->has_query = true;
+	this->impl_->hasQuery = true;
 	this->impl_->query_string = queries;
 }
 
-std::string Uri::to_string() const {
-	std::stringstream ss;
-	if (this->impl_->has_scheme) {
-		ss << this->getProtocol() << "://";
-	}
-	ss << this->impl_->host;
-	if (this->hasPort()) {
-		ss << ":" << this->getPort() << "/";
-	}
-	if (this->hasQuery()) {
-		ss << "?" << this->impl_->formatQueryString();
-	}
-	return ss.str();
-}
-
 std::ostream& operator<<(std::ostream& os, const Uri& uri) {
-    if(uri.impl_->has_scheme) {
+    if(uri.impl_->hasProtocol) {
         os << uri.getProtocol() << "://";
     }
     os << uri.getHost();

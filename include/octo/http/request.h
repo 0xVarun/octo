@@ -20,17 +20,15 @@
 #ifndef __OCTO_REQUEST_H_
 #define __OCTO_REQUEST_H_
 
-#include <memory>
 #include <string>
+#include <vector>
+#include <stdint.h>
 
+#include <octo/uri/uri.h>
 
 namespace octo {
 namespace http {
-    class Request {
-    public: // public function
-        Request();
-        ~Request();
-
+    struct Request {
         enum class Method {
             GET,
             POST,
@@ -39,6 +37,13 @@ namespace http {
             DELETE,
             INVALID
         };
+        Method method;
+        uri::Uri path;
+        std::string http_version;
+        std::map< std::string, std::string> headers;
+        std::vector< uint8_t > payload;
+    public: // public function
+        Request();
 
         /**
          * this method parses raw HTTP message
@@ -85,9 +90,6 @@ namespace http {
         bool parse_request_line(std::string& req_line);
         bool parse_headers(std::string& payload);
         void print_headers() const;
-    private: // private properties
-        struct Impl;
-        std::unique_ptr< Impl > impl_;
     }; // class Request
 } // namespace http
 } // namespace octo
