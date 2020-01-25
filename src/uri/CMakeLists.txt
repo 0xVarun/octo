@@ -15,15 +15,20 @@
 # You should have received a copy of the GNU General Public License
 # along with octo.  If not, see <http://www.gnu.org/licenses/>.
 
+option(BUILD_URI_LIBRARY "Build URI library" OFF)
+set(URI_BUILD_STYLE STATIC CACHE STRING "Build URI as STATIC or SHARED library")
 
-add_library(
-    uri STATIC
-    uri.cc
-)
+if (${BUILD_URI_LIBRARY})
+    add_library(
+            uri ${URI_BUILD_STYLE}
+            uri.cc
+    )
 
 
-add_library(
-    octo::uri
-    ALIAS
-    uri
-)
+    add_library(
+            octo::uri
+            ALIAS
+            uri
+    )
+endif ()
+

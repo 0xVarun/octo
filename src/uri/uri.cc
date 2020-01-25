@@ -264,6 +264,18 @@ struct Uri::Impl {
 	return temp.substr(0, temp.length() - 1);
   }
 
+  std::string formatUriPath() {
+    std::stringstream ss;
+    for(std::string path : this->path) {
+        if (path.length() == 0) {
+          ss << "/";
+        } else {
+            ss << path << "/";
+        }
+    }
+    std::string temp = ss.str();
+    return temp.substr(0, temp.length() - 1);
+  }
 };
 
 Uri::Uri() : impl_(new Impl) {}
@@ -297,56 +309,51 @@ bool Uri::parse(const std::string& raw) {
   if (!this->impl_->parseQueryString(queryAndFragment)) {
     return false;
   }
-
-//   for(auto x: this->impl_->query_string) {
-// 	std::cout << "[+] key = " << x.first << " value = " << x.second << std::endl;
-//   }
-
   return true;
 }
 
-std::string Uri::get_scheme() const {
+bool Uri::hasPort() const { return this->impl_->has_port; }
+
+bool Uri::hasQuery() const { return this->impl_->has_query; }
+
+std::string Uri::getProtocol() const {
   if (this->impl_->has_scheme) {
     return this->impl_->scheme;
   }
   return "";
 }
 
-bool Uri::has_scheme() const { return this->impl_->has_scheme; }
+std::string Uri::getHost() const {
+    return this->impl_->host;
+}
 
-bool Uri::has_port() const { return this->impl_->has_port; }
+uint16_t Uri::getPort() const { return this->impl_->port; }
 
-bool Uri::has_query() const { return this->impl_->has_query; }
+std::vector<std::string> Uri::getPath() const { return this->impl_->path; }
 
-std::string Uri::get_authority() const { return this->impl_->host; }
-
-uint16_t Uri::get_port() const { return this->impl_->port; }
-
-std::vector<std::string> Uri::get_path() const { return this->impl_->path; }
-
-std::vector< std::pair< std::string, std::string >> Uri::get_querys() const {
+std::vector< std::pair< std::string, std::string >> Uri::getQueryString() const {
   this->impl_->query_string;
 }
 
-void Uri::set_scheme(std::string scheme) {
+void Uri::setProtocol(std::string scheme) {
 	this->impl_->has_scheme = true;
 	this->impl_->scheme = scheme;
 }
 
-void Uri::set_authority(std::string authority) {
+void Uri::setHost(std::string authority) {
 	this->impl_->host = authority;
 }
 
-void Uri::set_port(uint16_t port) {
+void Uri::setPort(uint16_t port) {
 	this->impl_->has_port = true;
 	this->impl_->port = port;
 }
 
-void Uri::set_path(std::initializer_list<std::string> path) {
+void Uri::setPath(std::initializer_list<std::string> path) {
 	this->impl_->path = path;
 }
 
-void Uri::set_query(
+void Uri::setQuery(
     std::initializer_list<std::pair<std::string, std::string>> queries) {
 	this->impl_->has_query = true;
 	this->impl_->query_string = queries;
@@ -355,16 +362,35 @@ void Uri::set_query(
 std::string Uri::to_string() const {
 	std::stringstream ss;
 	if (this->impl_->has_scheme) {
-		ss << this->get_scheme() << "://";
+		ss << this->getProtocol() << "://";
 	}
 	ss << this->impl_->host;
-	if (this->impl_->has_port) {
-		ss << ":" << this->get_port() << "/";
+	if (this->hasPort()) {
+		ss << ":" << this->getPort() << "/";
 	}
-	if (this->impl_->has_query) {
+	if (this->hasQuery()) {
 		ss << "?" << this->impl_->formatQueryString();
 	}
 	return ss.str();
+}
+
+std::ostream& operator<<(std::ostream& os, const Uri& uri) {
+    if(uri.impl_->has_scheme) {
+        os << uri.getProtocol() << "://";
+    }
+    os << uri.getHost();
+    if (uri.hasPort()) {
+        os << ":" << uri.getPort();
+    }
+    if (!uri.impl_->path.empty()) {
+        os << uri.impl_->formatUriPath();
+    } else {
+        os << "/";
+    }
+    if (uri.hasQuery()) {
+        os << "?" << uri.impl_->formatQueryString();
+    }
+    return os;
 }
 
 Uri::~Uri() = default;

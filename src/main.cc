@@ -22,10 +22,11 @@
 
 int main(int argc, char **argv) {
     octo::uri::Uri uri;
-    uri.set_scheme("https");
-    uri.set_authority("www.google.com");
-    uri.set_port(443);
-    uri.set_query({std::make_pair("q", "bar"), std::make_pair("utm", "random123")});
-    std::cout << uri.to_string() << std::endl;
+    uri.setProtocol("https");
+    uri.setHost("www.google.com");
+    uri.setPort(443);
+    uri.setPath({ "", "foo", "bar" });
+    uri.setQuery({std::make_pair("q", "bar"), std::make_pair("utm", "random123")});
+    std::cout << uri << std::endl;
     // uri.parse("http://example.org/foo/bar?foo=bar&bar=foo");
 }

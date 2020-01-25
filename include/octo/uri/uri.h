@@ -24,6 +24,7 @@
 #include <string>
 #include <memory>
 #include <vector>
+#include <iostream>
 #include <initializer_list>
 #include <stdint.h>
 
@@ -36,30 +37,157 @@ class Uri {
  public:
   Uri();
 
-  // public methods
+  /**
+   * this function is responsible
+   * for parsing the URI string and
+   * storing its components in the class
+   * state
+   * @param[in] raw
+   *     this stores the raw, unparsed
+   *     URI string
+   * @return bool
+   *     an indication whether the URI was
+   *     parsed successfully is returned
+   */
   bool parse(const std::string& raw);
 
   // checks
-  bool has_scheme() const;
-  bool has_port() const;
-  bool has_query() const;
+  /**
+   * this function returns the hasPort flag
+   * from the class state
+   * @return bool
+   *     an indication whether the URI had a
+   *     port component is returned
+   */
+  bool hasPort() const;
+
+  /**
+   * this function returns the hasQuery flag
+   * from the class state
+   * @return bool
+   *     an indication whether the URI had a
+   *     query component is returned
+   */
+  bool hasQuery() const;
 
   // getters
-  std::string get_scheme() const;
-  std::string get_authority() const;
-  uint16_t get_port() const;
-  std::vector<std::string> get_path() const;
-  std::vector< std::pair< std::string, std::string >> get_querys() const;
+  /**
+   * Get the Protocol from the class
+   * state
+   * @return std::string
+   *    stores the return value of the
+   *    URI protocol
+   * @note if the URI was relative this
+   * will return an empty string ("")
+   */
+  std::string getProtocol() const;
+
+  /**
+   * Get the Host from the class
+   * state
+   * @return std::string
+   *     this returns the value of the
+   *     URI host
+   * @note if the URI was relative this
+   * will return an empty string ("")
+   */
+  std::string getHost() const;
+
+  /**
+   * Get the Port from the class
+   * state
+   * @return uint16_t
+   *     this stores the port component
+   *     of the URI
+   * @note the return value of this function
+   * is only valid if @code getPort();@endcode returns true
+   */
+  uint16_t getPort() const;
+
+  /**
+   * Get the Path from the class
+   * state
+   * @return std::vector<std::string>
+   *     this stores individial path
+   *     segments of the URI
+   * @retval {}
+   *     if the URI does not end in
+   *     a forward slash
+   * @retval {""}
+   *     if the URI ends in a forward
+   *     slash right after the
+   *     authority
+   */
+  std::vector<std::string> getPath() const;
+
+  /**
+   * Get the Query String from
+   * the class state
+   * @return std::vector< std::pair< std::string, std::string >>
+   *     this stores a vector of key-value
+   *     pair of the query params in the
+   *     uri
+   */
+  std::vector< std::pair< std::string, std::string >> getQueryString() const;
 
   // setters
-  void set_scheme(std::string scheme);
-  void set_authority(std::string authority);
-  void set_port(uint16_t port);
-  void set_path(std::initializer_list<std::string> path);
-  void set_query(
+  /**
+   * Set the Protocol of
+   * the class state
+   * @param[in] scheme
+   *     this stores the scheme
+   *     (protocol) component of
+   *     the URI
+   */
+  void setProtocol(std::string scheme);
+
+  /**
+   * Set the Host of
+   * the class state
+   * @param host
+   *     this stores the host
+   *     (authority) part of the
+   *     URI
+   */
+  void setHost(std::string host);
+
+  /**
+   * Set the Port of
+   * the class state
+   * @param port
+   *     this stores the port
+   *     part of the URI
+   */
+  void setPort(uint16_t port);
+
+  /**
+   * Set the Path of the class
+   * state
+   * @param path
+   *     this stores the path
+   *     part of the URI
+   */
+  void setPath(std::initializer_list<std::string> path);
+
+  /**
+   * Set the Query of 
+   * the class state
+   * @param queries
+   *     this stores the queries
+   *     part of the URI
+   */
+  void setQuery(
       std::initializer_list<std::pair<std::string, std::string>> queries);
 
   std::string to_string() const;
+
+  /**
+   * << operator overload to log the
+   * URI
+   * @param os
+   * @return URI
+   */
+  friend std::ostream& operator<<(std::ostream& os, const Uri& uri);
  private:
   struct Impl;
   std::unique_ptr<Impl> impl_;

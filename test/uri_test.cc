@@ -24,36 +24,53 @@
 TEST(URITest, URIParseFromString) {
   octo::uri::Uri uri;
   ASSERT_TRUE(uri.parse("http://example.org"));
-  ASSERT_EQ("http", uri.get_scheme());
-  ASSERT_EQ("example.org", uri.get_authority());
+  ASSERT_EQ("http", uri.getProtocol());
+  ASSERT_EQ("example.org", uri.getHost());
+}
+
+TEST(URITest, URIParseFromStringWithEndingSlash) {
+    octo::uri::Uri uri;
+    ASSERT_TRUE(uri.parse("http://example.org/foo/bar/"));
+    ASSERT_EQ("http", uri.getProtocol());
+    ASSERT_EQ("example.org", uri.getHost());
+    ASSERT_EQ(
+            (std::vector< std::string >{
+                "",
+                "foo",
+                "bar",
+                ""
+            }),
+            uri.getPath()
+    );
 }
 
 TEST(URITest, URIParseFromStringWithPath) {
   octo::uri::Uri uri;
   ASSERT_TRUE(uri.parse("http://example.org/foo/bar"));
-  ASSERT_EQ("http", uri.get_scheme());
-  ASSERT_EQ("example.org", uri.get_authority());
+  ASSERT_EQ("http", uri.getProtocol());
+  ASSERT_EQ("example.org", uri.getHost());
   ASSERT_EQ((std::vector<std::string>{
                 "",
                 "foo",
                 "bar",
             }),
-            uri.get_path());
-  ASSERT_FALSE(uri.has_port());
-  ASSERT_FALSE(uri.has_query());
+            uri.getPath());
+  ASSERT_FALSE(uri.hasPort());
+  ASSERT_FALSE(uri.hasQuery());
 }
 
 
 TEST(URITest, URIParseFromStringWithoutPathWithQueryParameter) {
   octo::uri::Uri uri;
   ASSERT_TRUE(uri.parse("http://example.org/?foo=bar"));
-  ASSERT_EQ("http", uri.get_scheme());
-  ASSERT_EQ("example.org", uri.get_authority());
+  ASSERT_EQ("http", uri.getProtocol());
+  ASSERT_EQ("example.org", uri.getHost());
 }
 
 TEST(URITest, URIParseFromStringWithPathWithQueryParameter) {
-  octo::uri::Uri uri;
-  ASSERT_TRUE(uri.parse("http://example.org/foo/bar?foo=bar&bar=foo"));
-  ASSERT_EQ("http", uri.get_scheme());
+    octo::uri::Uri uri;
+    ASSERT_TRUE(uri.parse("http://example.org/foo/bar?foo=bar"));
+    ASSERT_EQ("http", uri.getProtocol());
+    ASSERT_EQ("example.org", uri.getHost());
   // ASSERT_EQ("example.org", uri.get_authority());
 }
