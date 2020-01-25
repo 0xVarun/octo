@@ -364,7 +364,7 @@ void Uri::setQuery(
 }
 
 std::ostream& operator<<(std::ostream& os, const Uri& uri) {
-    if(uri.impl_->hasProtocol) {
+    if(uri.impl_->hasProtocol && !uri.isRelative()) {
         os << uri.getProtocol() << "://";
     }
     os << uri.getHost();
