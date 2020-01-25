@@ -18,6 +18,7 @@
 add_library(
     http STATIC
     request.cc
+    response.cc
 )
 
 target_link_libraries(
