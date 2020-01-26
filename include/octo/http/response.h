@@ -17,8 +17,8 @@
  * along with octo.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __OCTO_RESPONSE_H
-#define __OCTO_RESPONSE_H
+#ifndef __OCTO_RESPONSE_H_
+#define __OCTO_RESPONSE_H_
 
 #include <string>
 #include <vector>

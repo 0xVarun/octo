@@ -42,10 +42,13 @@ include(Macros)
 
 find_package(Boost 1.65.1 REQUIRED)
 include_directories(${Boost_INCLUDE_DIRS})
+find_package(OpenSSL REQUIRED)
+
 enable_testing()
+add_subdirectory(vendor/stout)
 add_subdirectory(vendor/gtest)
 
-include_directories(include)
+include_directories(include ${OPENSSL_INCLUDE_DIR})
 add_subdirectory(src)
 
 add_subdirectory(test)

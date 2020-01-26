@@ -18,6 +18,7 @@
 
 add_subdirectory(uri)
 add_subdirectory(http)
+add_subdirectory(transport)
 
 add_executable(
     testing
@@ -28,4 +29,5 @@ target_link_libraries(
     testing
     octo::uri
     octo::http
+    octo::transport
 )

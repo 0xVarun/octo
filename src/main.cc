@@ -20,6 +20,11 @@
 
 #include <octo/http/request.h>
 #include <octo/http/response.h>
+#include <octo/transport/transport.h>
+
+void payload_parse(std::vector< uint8_t > data) {
+    std::cout << "[+] CALLED " << std::endl;
+}
 
 int main(int argc, char **argv) {
     octo::uri::Uri uri;
@@ -63,4 +68,9 @@ int main(int argc, char **argv) {
     response.addHeader(std::make_pair("Content-Type", "application/json"));
 
     std::cout << response.serialize() << std::endl;
+
+
+    octo::transport::NetworkTransport* transport = octo::transport::NetworkTransport::init();
+    transport->registerReceiveDelegate(payload_parse);
+    transport->establish(8080, false);
 }
