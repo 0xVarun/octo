@@ -23,5 +23,5 @@
 
 TEST(ResponseTest, CheckIfHeaderExists) {
     octo::http::Response response;
-    ASSERT_GT(response.headers->size(), 0);
+    ASSERT_GT(response.headers.size(), 0);
 }

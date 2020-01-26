@@ -19,33 +19,48 @@
 
 #include <map>
 #include <string>
-#include <memory>
 #include <vector>
-#include <stdint.h>
+#include <cctype>
+#include <sstream>
 
 #include <octo/http/response.h>
 
 namespace octo {
 namespace http {
 
+    std::string CRLF("\r\n");
+
     Response::Response() {
-        this->headers = new std::map< std::string, std::string >;
-        this->headers->insert(std::make_pair("X-Powered-By", "Octo/0.1.0"));
-        this->payload = new std::vector< uint8_t >;
+        this->headers.insert(std::make_pair("Server", "Octo/0.1.0"));
     }
 
     void Response::addHeader(std::pair<std::string, std::string> header) {
-        this->headers->insert(header);
+        this->headers.insert(header);
     }
 
     void Response::addPayload(std::string &payload) {
-        this->payload->assign(payload.begin(), payload.end());
+        this->payload.assign(payload.begin(), payload.end());
     }
 
-    Response::~Response() {
-        delete this->headers;
-        delete this->payload;
+    std::string Response::serialize() const {
+        std::stringstream ss;
+        ss << "HTTP/1.1";
+        ss << " " << this->statusCode;
+        ss << " " << this->statusPhrase << CRLF;
+        std::map< std::string, std::string > localHeaders(this->headers.begin(), this->headers.end());
+        std::map< std::string, std::string >::iterator it;
+        for (it = localHeaders.begin(); it != localHeaders.end(); ++it) {
+            ss << it->first  << ": " << it->second << CRLF;
+        }
+        ss << "Content-Length: " << this->payload.size() << CRLF;
+        ss << CRLF;
+        for(uint8_t item: this->payload) {
+            ss << item;
+        }
+        return ss.str();
     }
+
+    Response::~Response() = default;
 
 } // namespace http
 } // namespace octo

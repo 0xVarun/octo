@@ -19,6 +19,7 @@
 #include <iostream>
 
 #include <octo/http/request.h>
+#include <octo/http/response.h>
 
 int main(int argc, char **argv) {
     octo::uri::Uri uri;
@@ -27,7 +28,7 @@ int main(int argc, char **argv) {
     uri.setPort(443);
     uri.setPath({ "", "foo", "bar" });
     uri.setQuery({std::make_pair("q", "bar"), std::make_pair("utm", "random123")});
-    std::cout << uri << std::endl;
+//    std::cout << uri << std::endl;
     // uri.parse("http://example.org/foo/bar?foo=bar&bar=foo");
 
     std::string raw_request = "GET /foo/bar HTTP/1.1\r\n"
@@ -51,6 +52,15 @@ int main(int argc, char **argv) {
     request.parse_http_request(raw_request);
     request.path.setProtocol("https");
     request.path.setHost("example.org");
-    std::cout << request.get_path() << std::endl;
+//    std::cout << request.get_path() << std::endl;
 
+
+    octo::http::Response response;
+    response.statusCode = 200;
+    response.statusPhrase = "OK";
+    std::string data = "{\"message\": \"Working\"}";
+    response.addPayload(data);
+    response.addHeader(std::make_pair("Content-Type", "application/json"));
+
+    std::cout << response.serialize() << std::endl;
 }

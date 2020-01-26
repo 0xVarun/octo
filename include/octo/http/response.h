@@ -37,13 +37,13 @@ namespace http {
          * headers already. Please check
          * the API doc for default headers
          */
-        std::map< std::string, std::string >* headers;
+        std::map< std::string, std::string > headers;
 
         /**
          * this stores the raw byte by byte
          * response data (payload)
          */
-        std::vector< uint8_t >* payload;
+        std::vector< uint8_t > payload;
 
         /**
          * this stores an indication of
@@ -92,7 +92,7 @@ namespace http {
          * status, headers and body
          * @return
          */
-        std::string generate() const;
+        std::string serialize() const;
 
     }; // struct Response
 }
