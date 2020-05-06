@@ -26,7 +26,6 @@ if (${BUILD_TRANSPORT_LIBRARY})
 
     target_link_libraries(
         transport
-        stout
         ${OPENSSL_LIBRARIES}
     )
 

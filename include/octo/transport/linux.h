@@ -26,8 +26,6 @@
 
 #include <octo/transport/itransport.h>
 
-#include <stout/try.hpp>
-
 namespace octo {
 namespace transport {
     class NetworkTransport : public ITransport {
@@ -41,9 +39,9 @@ namespace transport {
     public:
         ~NetworkTransport();
         static NetworkTransport* init();
-        Try<bool> establish(uint16_t port, bool ssl) override;
+        bool establish(uint16_t port, bool ssl) override;
         void registerReceiveDelegate(ReceiveDelegate receiveDelegate) override;
-        Try<bool> transmit(std::vector<uint8_t> payload) override;
+        bool transmit(std::vector<uint8_t> payload) override;
         void destory() override;
 
     private:

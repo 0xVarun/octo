@@ -25,7 +25,7 @@
 #include <stdint.h>
 #include <functional>
 
-#include <stout/try.hpp>
+// #include <stout/try.hpp>
 
 namespace octo {
 namespace transport {
@@ -37,9 +37,9 @@ namespace transport {
         ITransport() = default;
         ~ITransport() = default;
 
-        virtual Try<bool> establish(uint16_t port, bool ssl) = 0;
+        virtual bool establish(uint16_t port, bool ssl) = 0;
         virtual void registerReceiveDelegate(ReceiveDelegate receiveDelegate) = 0;
-        virtual Try<bool> transmit(std::vector< uint8_t > payload) = 0;
+        virtual bool transmit(std::vector< uint8_t > payload) = 0;
         virtual void destory() = 0;
 
     }; // class ITransport

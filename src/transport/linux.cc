@@ -35,7 +35,6 @@
 #include <octo/http/request.h>
 #include <octo/transport/linux.h>
 
-#include <stout/try.hpp>
 
 namespace {
     void socketErrorReport(int status, int LINE = 0) {
@@ -67,19 +66,13 @@ namespace transport {
         return instance;
     }
 
-    Try<bool> NetworkTransport::establish(uint16_t port, bool ssl = false) {
+    bool NetworkTransport::establish(uint16_t port, bool ssl = false) {
         if (this->impl_->recv == nullptr) {
             exit(-1);
         }
         int status;
         this->impl_->port = port;
         this->impl_->ssl = ssl;
-
-        if (ssl) {
-            SSL_load_error_strings();
-            SSL_library_init();
-            OpenSSL_add_all_algorithms();
-        }
 
         struct sockaddr_in server;
         int enableSocketOptions;
@@ -101,28 +94,16 @@ namespace transport {
         for (;;) {
             int incoming = accept(this->impl_->serverFd, (struct sockaddr *)&server, &size);
             socketErrorReport(incoming, __LINE__);
-            this->impl_->sslContext = SSL_CTX_new(TLS_server_method());
-            SSL_CTX_set_options(this->impl_->sslContext, SSL_OP_SINGLE_DH_USE);
-            
-            int use_cert = SSL_CTX_use_certificate_file(this->impl_->sslContext, "/home/varun/sandbox/octo/key/cert.pem" , SSL_FILETYPE_PEM);
-            int use_prv = SSL_CTX_use_PrivateKey_file(this->impl_->sslContext, "/home/varun/sandbox/octo/key/key.pem", SSL_FILETYPE_PEM);
-
-            this->impl_->sslI = SSL_new(this->impl_->sslContext);
-            SSL_set_fd(this->impl_->sslI, incoming);
-            int ssl_err = SSL_accept(this->impl_->sslI);
-            const char *resp = response.serialize().c_str();
-            SSL_write(this->impl_->sslI, "resp", strlen("resp"));
             break;
-            delete[] buff;
         }
-
+        return true;
     }
 
     void NetworkTransport::registerReceiveDelegate(ReceiveDelegate receiveDelegate) {
         this->impl_->recv = receiveDelegate;
     }
 
-    Try<bool> NetworkTransport::transmit(std::vector<uint8_t> payload) {
+    bool NetworkTransport::transmit(std::vector<uint8_t> payload) {
         size_t transmitted = send(this->impl_->serverFd, payload.data(), payload.size(), 0);
         if (transmitted < 0) {
             return false;
@@ -135,17 +116,9 @@ namespace transport {
             close(this->impl_->serverFd);
             this->impl_->serverFd = -1;
         }
-        if (this->impl_->ssl) {
-            SSL_shutdown(this->impl_->sslI);
-            SSL_free(this->impl_->sslI);
-        } 
     }
 
     NetworkTransport::~NetworkTransport() {
-        if (this->impl_->ssl) {
-            ERR_free_strings();
-            EVP_cleanup();
-        }
         this->destory();
     }
 
