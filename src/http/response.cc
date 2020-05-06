@@ -24,7 +24,6 @@
 
 #include <octo/http/response.h>
 
-#include <stout/uuid.hpp>
 
 namespace octo {
 namespace http {
@@ -33,7 +32,7 @@ namespace http {
 
     Response::Response() {
         this->headers.insert(std::make_pair("Server", "Octo/0.1.0"));
-        this->headers.insert(std::make_pair("x-octo-debug", UUID::random().toString()));
+        this->headers.insert(std::make_pair("x-octo-debug", "uuid_v4_gen()"));
     }
 
     void Response::addHeader(std::pair<std::string, std::string> header) {

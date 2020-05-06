@@ -24,7 +24,6 @@ add_library(
 target_link_libraries(
     http
     octo::uri
-    stout
 )
 
 add_library(

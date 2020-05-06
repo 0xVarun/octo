@@ -147,6 +147,7 @@ namespace  http {
                 this->headers.emplace(std::make_pair(key, value));
             }
         }
+        return true;
     }
 
 
