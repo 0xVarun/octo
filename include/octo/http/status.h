@@ -68,7 +68,6 @@ enum class StatusCode : unsigned int {
     CONFLICT,
     GONE,
     LENGTH_REQUIRED,
-    
     PRECONDITION_FAILED,
     PAYLOAD_TOO_LARGE,
     URI_TOO_LONG,
@@ -82,7 +81,6 @@ enum class StatusCode : unsigned int {
     TOO_MANY_REQUEST,
     REQUEST_HEADER_FIELDS_TOO_LARGE,
     UNAVAILABLE_FOR_LEGAL_REASON,
-
     // 5xx status codes (server error)
     INTERNAL_SERVER_ERROR = 500,
     NOT_IMPLEMENTED,
