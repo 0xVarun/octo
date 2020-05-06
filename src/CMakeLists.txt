@@ -18,6 +18,7 @@
 
 add_subdirectory(uri)
 add_subdirectory(http)
+add_subdirectory(service)
 add_subdirectory(transport)
 
 add_executable(

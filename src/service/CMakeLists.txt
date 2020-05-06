@@ -15,7 +15,18 @@
 # You should have received a copy of the GNU General Public License
 # along with octo.  If not, see <http://www.gnu.org/licenses/>.
 
-create_test(request_test octo::http)
-create_test(uri_test octo::uri)
-create_test(response_test octo::http)
-create_test(service_test octo::service)
+add_library(
+    service STATIC
+    controller.cc
+)
+
+target_link_libraries(
+    service
+    octo::http
+)
+
+add_library(
+    octo::service
+    ALIAS
+    service
+)
