@@ -17,18 +17,18 @@
 
 macro(create_test test_name library_link)
     add_executable(
-	${test_name}
-	${test_name}.cc
+		${test_name}
+		${test_name}.cc
     )
     
     target_link_libraries(
-	${test_name}
-	${library_link}
-	gtest_main
+		${test_name}
+		${library_link}
+		gtest_main
     )
 
     add_test(
-	${test_name}
-	${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${test_name}
+		${test_name}
+		${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${test_name}
     )
 endmacro()
