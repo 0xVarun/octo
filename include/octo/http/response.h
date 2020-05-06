@@ -25,6 +25,8 @@
 #include <stdint.h>
 #include <map>
 
+#include <octo/http/status.h>
+
 namespace octo {
 namespace http {
     struct Response {
@@ -85,6 +87,8 @@ namespace http {
          *     the data to be sent
          */
         void addPayload(std::string& payload);
+
+        void setStatus(StatusCode code);
 
         /**
          * this function generate a proper

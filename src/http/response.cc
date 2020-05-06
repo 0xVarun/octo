@@ -22,6 +22,7 @@
 #include <vector>
 #include <sstream>
 
+#include <octo/http/status.h>
 #include <octo/http/response.h>
 
 
@@ -41,6 +42,11 @@ namespace http {
 
     void Response::addPayload(std::string &payload) {
         this->payload.assign(payload.begin(), payload.end());
+    }
+
+    void Response::setStatus(StatusCode code) {
+        this->statusCode = static_cast<unsigned int>(code);
+        this->statusPhrase = StatusPharse.at(code);
     }
 
     std::string Response::serialize() const {
