@@ -1,6 +1,3 @@
 [submodule "vendor/gtest"]
 	path = vendor/gtest
 	url = https://github.com/google/googletest
-[submodule "vendor/stout"]
-	path = vendor/stout
-	url = https://github.com/3rdparty/stout
