@@ -20,6 +20,9 @@
 #ifndef __OCTO_H_
 #define __OCTO_H_
 
-#include <octo/json.h>
+#include <octo/internal/state.h>
+#include <octo/service/controller.h>
+
+#define registerRoute octo::internal::State::registerRoute
 
 #endif // __OCTO_H_

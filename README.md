@@ -1,7 +1,7 @@
 
 # Octo 
 
-Octo is an attemp to write a framework for webservices in C++
+Octo is an attempt to write a framework for webservices in C++
 
 a static library that you should be able to drop in and write webservices,
 compile and deploy 
