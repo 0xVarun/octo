@@ -40,12 +40,11 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
 include(Macros)
 
-find_package(Boost 1.65.1 REQUIRED)
+find_package(Boost 1.62 REQUIRED)
 include_directories(${Boost_INCLUDE_DIRS})
 find_package(OpenSSL REQUIRED)
 
 enable_testing()
-add_subdirectory(vendor/stout)
 add_subdirectory(vendor/gtest)
 
 include_directories(include ${OPENSSL_INCLUDE_DIR})
