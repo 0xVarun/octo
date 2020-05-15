@@ -1,0 +1,11 @@
+language: cpp
+addons:
+  apt:
+    packages:
+      libssl1.0-dev
+compiler:
+  - clang
+  - gcc
+os:
+  - linux
+script: ./ci/build.sh
