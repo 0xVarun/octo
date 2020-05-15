@@ -336,7 +336,7 @@ uint16_t Uri::getPort() const { return this->impl_->port; }
 std::vector<std::string> Uri::getPath() const { return this->impl_->path; }
 
 std::vector< std::pair< std::string, std::string >> Uri::getQueryString() const {
-  this->impl_->query_string;
+  return this->impl_->query_string;
 }
 
 void Uri::setProtocol(std::string scheme) {
