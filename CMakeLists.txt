@@ -46,6 +46,7 @@ find_package(OpenSSL REQUIRED)
 
 enable_testing()
 add_subdirectory(vendor/gtest)
+add_subdirectory(vendor/spdlog)
 
 include_directories(include ${OPENSSL_INCLUDE_DIR})
 add_subdirectory(src)
