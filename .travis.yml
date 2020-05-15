@@ -2,7 +2,7 @@ language: cpp
 addons:
   apt:
     packages:
-      libssl1.0-dev
+      libssl-dev
 compiler:
   - clang
   - gcc
