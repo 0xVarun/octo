@@ -20,6 +20,7 @@
 #ifndef __OCTO_CONTROLLER_H_
 #define __OCTO_CONTROLLER_H_
 
+#include <octo/http/request.h>
 #include <octo/http/response.h>
 
 namespace octo {
