@@ -45,6 +45,8 @@ namespace {
 		octo::http::Response GET(octo::http::Request* request) {
 			octo::http::Response res;
 			res.setStatus(octo::http::StatusCode::OK);
+			std::string payload = "hello world";
+			res.addPayload(payload);
 			return res;
 		}
 	};
@@ -60,11 +62,28 @@ TEST(ServiceControllerTest, NotOverridingGivesMethodNotAllowed) {
 }
 
 
-TEST(ServiceControllerTest, GETCallRetursHelloWorld) {
+TEST(ServiceControllerTest, GETCallReturnsHelloWorld) {
 	TestRestController testController;
 	octo::http::Request req;
 	req.parse_http_request(raw_request);
 	auto response = testController.GET(&req);
 	ASSERT_EQ(response.statusCode, 200);
+	ASSERT_EQ(
+		response.payload,
+		(std::vector< uint8_t> {
+			0x68,
+			0x65,
+			0x6c,
+			0x6c,
+			0x6f,
+			0x20,
+			0x77,
+			0x6f,
+			0x72,
+			0x6c,
+			0x64,
+
+		})
+	);
 }
 
