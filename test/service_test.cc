@@ -40,14 +40,31 @@ namespace {
         "\r\n"
         "foo=bar&bar=foo";
 
-    class TestRestController : public octo::service::RestController {};
+    class TestRestController : public octo::service::RestController {
+	public:
+		octo::http::Response GET(octo::http::Request* request) {
+			octo::http::Response res;
+			res.setStatus(octo::http::StatusCode::OK);
+			return res;
+		}
+	};
 }
 
 TEST(ServiceControllerTest, NotOverridingGivesMethodNotAllowed) {
     TestRestController testController;
     octo::http::Request request;
     request.parse_http_request(raw_request);
-    octo::http::Response response = testController.GET(&request);
+    octo::http::Response response = testController.POST(&request);
     ASSERT_EQ(response.statusCode, 405);
     ASSERT_EQ(response.statusPhrase, "Method Not Allowed");
 }
+
+
+TEST(ServiceControllerTest, GETCallRetursHelloWorld) {
+	TestRestController testController;
+	octo::http::Request req;
+	req.parse_http_request(raw_request);
+	auto response = testController.GET(&req);
+	ASSERT_EQ(response.statusCode, 200);
+}
+
