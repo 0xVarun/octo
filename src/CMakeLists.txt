@@ -32,4 +32,6 @@ target_link_libraries(
     octo::uri
     octo::http
     octo::transport
+    octo::internal
+    octo::service
 )

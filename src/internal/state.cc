@@ -20,14 +20,15 @@
 #include <string>
 #include <functional>
 
+#include <octo/http/request.h>
 #include <octo/internal/state.h>
 #include <octo/service/controller.h>
-
-static octo::internal::State* instance;
 
 
 namespace octo {
 namespace internal { 
+
+	State* State::instance;
 
     struct State::Impl {
         std::map< std::string, octo::service::RestController> routing;
