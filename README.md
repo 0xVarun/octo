@@ -1,6 +1,10 @@
 
 # Octo 
 
+#### Build Status
+
+[![Build Status](https://api.travis-ci.com/0xVarun/octo.svg?branch=development)](https://travis-ci.org/0xVarun/octo)
+
 Octo is an attempt to write a framework for webservices in C++
 
 a static library that you should be able to drop in and write webservices,
